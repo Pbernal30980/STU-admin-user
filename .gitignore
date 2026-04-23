@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+.tmp/
+tmp/
+
+# Nx cache and workspace data
+.nx/
+
+# Angular cache
+.angular/
+
+# Test and coverage artifacts
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ionic/Capacitor native platforms (generated)
+android/
+ios/
+
+# Misc cache
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# Firebase local artifacts
+.firebase/
+firebase-debug.log*
+
+# Firebase Functions build output
+functions/lib/
+
+# Local AI/agent workspace metadata
+.agents/
+skills-lock.json

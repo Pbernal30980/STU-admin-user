@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "default": "stu-calima"
+  },
+  "targets": {
+    "stu-calima": {
+      "hosting": {
+        "admin": [
+          "stu-calima-admin"
+        ],
+        "user": [
+          "stu-calima",
+          "stu-calima-user"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
