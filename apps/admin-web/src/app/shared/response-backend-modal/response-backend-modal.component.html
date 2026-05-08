@@ -1,0 +1,16 @@
+<div class="modal-backdrop fixed inset-0 flex items-center justify-center px-4">
+  <div class="modal-surface w-full max-w-md rounded-[28px] p-6">
+    <div class="flex items-start gap-4">
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+        <i class="fa-solid fa-circle-exclamation text-xl"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-rose-500">{{ title() }}</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">{{ message() }}</p>
+      </div>
+    </div>
+    <div class="mt-6 flex justify-end">
+      <button class="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700" (click)="onClose()">Cerrar</button>
+    </div>
+  </div>
+</div>

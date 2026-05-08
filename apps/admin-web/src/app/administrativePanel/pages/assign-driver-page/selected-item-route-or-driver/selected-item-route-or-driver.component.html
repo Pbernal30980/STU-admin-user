@@ -1,0 +1,59 @@
+<style>
+  .top-100 {
+    top: 100%
+  }
+
+  .bottom-100 {
+    bottom: 100%
+  }
+
+  .max-h-select {
+    max-height: 100px;
+  }
+</style>
+<div class="mt-5 max-w-xl sm:mt-5 mx-auto ">
+  <div class="flex flex-col relative">
+    <label class="block text-sm font-semibold leading-6 text-black">{{title()}}</label>
+
+    <div class="w-full">
+      <div class=" w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-400 ring-blue-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-300 sm:text-sm sm:leading-6
+          my-2 p-1 bg-white flex  border-gray-200 ">
+        <div class="flex flex-auto flex-wrap"></div>
+        <input [value]="selected()" placeholder="Search by position"
+          class="p-1 px-2 appearance-none outline-none w-full text-gray-800">
+        <div class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200">
+          <button (click)="toggleDropdown()"
+            class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
+            <svg class="transition-transform duration-200 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    @if(isDropdownOpen){
+    <div class="absolute shadow bg-white top-5/12 z-40 w-full lef-0 rounded max-h-select overflow-y-auto svelte-5uyqqj">
+      @for (item of list(); track item) {
+      <div class="flex flex-col w-full">
+        <div class="cursor-pointer w-full border-gray-100 rounded-b hover:bg-teal-100">
+          <div class="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative hover:border-teal-100">
+            <div class="w-full items-center flex">
+              <div (click)="add.emit(item)" class="mx-2 -mt-1  ">{{item.name}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="h-28">
+
+
+    </div>
+
+    }
+
+  </div>
+</div>

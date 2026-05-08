@@ -1,0 +1,72 @@
+<div class="isolate bg-white px-6 mt-5 mb-5 py-10 sm:py-5 lg:px-8 rounded-md shadow-md">
+  <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-2">
+    <h2 class="text-2xl font-bold text-black" style="color: #4A90E2;font-family: 'Poppins', sans-serif;">{{titlePage()}}
+    </h2>
+    <button (click)="goToForm()"
+      class="bg-emerald-500 hover:bg-emerald-800 text-white font-semibold py-2 px-4 rounded-md">
+      {{buttonName()}}
+    </button>
+  </div>
+  <div class="space-y-2">
+
+    @if (filter()) {<app-filters [availableFilters]="['DRIVER','ADMIN']" [selectedFilters]="selectedFilters()"
+      (filterChange)="onFilterChange($event)">></app-filters> }
+
+    @for (item of filteredList(); track item) {
+
+    <div class="flex items-center justify-between bg-blue-100 p-3 rounded-md">
+      <div class="flex items-center space-x-2">
+
+        <span class="text-gray-700">{{item.name}}</span>
+      </div>
+
+      <div class="flex space-x-2">
+
+        <button (click)="showInfoModal.set(true); itemChosen.set(item)" class="cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path fill="#0fa537"
+              d="M12 17q.425 0 .713-.288T13 16v-4q0-.425-.288-.712T12 11t-.712.288T11 12v4q0 .425.288.713T12 17m0-8q.425 0 .713-.288T13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8" />
+          </svg>
+        </button>
+        @if (titlePage() != 'Lista de Usuarios') {
+        <button (click)="isEdit.set(true) ; openModal(item)" class="text-blue-600 cursor-pointer hover:text-blue-800">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+          </svg>
+        </button>
+
+        }
+        @if (currentRole == 'SUPERADMIN' || (currentRole == 'ADMIN' && item.role != 'ADMIN')) {
+
+        <button (click)="isEdit.set(false); openModal(item) " class="text-red-600 cursor-pointer hover:text-red-800">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" style="color: red;" class="h-6 w-6" x-tooltip="tooltip">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+        </button>
+        }
+      </div>
+
+    </div>
+    }
+  </div>
+</div>
+@if (showModal()) {
+<app-confirm-modal [message]="this.isEdit() ? '¿Está seguro de que desea editar el elemento' :
+    '¿Está seguro de que desea eliminar el elemento'" [title]=" this.isEdit() ? 'Confirmar Edicion' :
+    'Confirmar Eliminación'" [itemName]="itemChosen()!.name" [buttonMessage]="this.isEdit() ? 'Editar' :'Eliminar'"
+  [colorButton]="this.isEdit() ? 'blue' :'red'" [toastMessage]="this.isEdit() ? 'Elemento editado correctamente'
+    : 'Elemento eliminado correctamente'" (closeModal)="closeModal()" (confirm)="confirmModal()">
+</app-confirm-modal>
+}
+
+@if(showInfoModal()){
+  <app-info-modal
+   [itemName]="itemChosen()!.name"
+    [item]="itemChosen()"
+    (closeModal)="closeModal()"
+  />
+}

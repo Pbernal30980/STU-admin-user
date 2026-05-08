@@ -1,0 +1,32 @@
+@if(isEditing() == false) {
+    @if(neighborhoodItem.neighborhoodSelected() != null) {
+      @for(location of locations(); track location) {
+        @if(neighborhoodItem.neighborhoodSelected()?.name == location.name) {
+            <div [attr.data-trigger]="goToLocation(location, $index)"></div>
+        }
+      }
+    }
+}
+
+<google-map height="400px" width="100%" [mapId]="env" [center]="center()" [zoom]="isEditing() ?  13:zoom()">
+
+  @if(isEditing()){
+    @if(neighborhoodItem.neighborhoodSelected() != null) {
+      @for (location of locations(); track location) {
+        @if(neighborhoodItem.neighborhoodSelected()?.name == location.name) {
+          <map-advanced-marker #marker="mapAdvancedMarker" (mapClick)="openInfoWindow(location,marker)"
+          [position]="{lat:location.latitude, lng:location.longitude}" />
+        }
+      }
+    }
+  }
+
+  @if (isEditing() == false) {
+
+      @for (location of locations(); track location) {
+        <map-advanced-marker #marker="mapAdvancedMarker" (mapClick)="openInfoWindow(location,marker)"
+        [position]="{lat:location.latitude, lng:location.longitude}" />
+      }
+  }
+  <map-info-window />
+</google-map>

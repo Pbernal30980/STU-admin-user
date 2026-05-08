@@ -1,0 +1,39 @@
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {  opacity: 1;}
+  }
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-in-out forwards;
+  }
+</style>
+<div class="w-full bg-white rounded-xl shadow-xl p-4 border border-emerald-500 mt-2 animate-fade-in">
+  <app-filters [availableFilters]="filters" [selectedFilters]="selectedFilters()" (filterChange)="setFilters($event)" />
+
+  <div class="mt-4 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+    @if (loadingState()) {
+    <div>
+      <app-search-loading />
+    </div>
+    }
+    @else {
+    <section>
+      @if (results().length > 0) {
+
+      <div>
+        <app-search-results [results]="results()" (resultSelected)="resultSelected.emit($event)" />
+      </div>
+      }
+      @else {
+      <div>
+        <div class="text-center py-6 text-gray-500">
+          <p>No se encontraron resultados que coincidan con tu búsqueda.</p>
+        </div>
+      </div>
+      }
+    </section>
+    }
+  </div>
+</div>

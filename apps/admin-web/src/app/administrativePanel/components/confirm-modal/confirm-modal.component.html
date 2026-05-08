@@ -1,0 +1,14 @@
+<div class="fixed inset-0 flex items-center justify-center bg-opacity-20 backdrop-blur-sm">
+    <div class="bg-white p-6 rounded-md shadow-md w-96">
+      <h2 class="text-lg font-bold text-black">{{title()}}</h2>
+      <p class="mt-2 text-black"> {{message()}} ({{ itemName() }}) ?</p>
+      <div class="mt-4 flex justify-end space-x-2">
+        <button (click)="closeModal.emit()" class="bg-gray-300 px-4 py-2 rounded text-black">Cancelar</button>
+        <button (click)="showToast.set(true); confirm.emit()" [style.background-color]="colorButton()" class=" text-white px-4 py-2 rounded">{{buttonMessage()}}</button>
+      </div>
+    </div>
+  </div>
+
+  @if (showToast()) {
+    <app-toast [message]= "toastMessage()"  [color]="'green'"/>
+  }

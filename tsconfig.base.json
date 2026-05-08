@@ -12,13 +12,12 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "@stu/core-models": ["libs/core-models/src/index.ts"],
-      "@stu/core-api": ["libs/core-api/src/index.ts"],
-      "@stu/feature-realtime": ["libs/feature-realtime/src/index.ts"],
-      "@stu/feature-maps": ["libs/feature-maps/src/index.ts"],
-      "@stu/shared-ui": ["libs/shared-ui/src/index.ts"]
+      "@stu/core-models": ["./libs/core-models/src/index.ts"],
+      "@stu/core-api": ["./libs/core-api/src/index.ts"],
+      "@stu/feature-realtime": ["./libs/feature-realtime/src/index.ts"],
+      "@stu/feature-maps": ["./libs/feature-maps/src/index.ts"],
+      "@stu/shared-ui": ["./libs/shared-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

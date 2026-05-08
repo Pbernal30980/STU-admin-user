@@ -1,0 +1,8 @@
+<app-header [title]="'Paradas'"/>
+<app-show-form [form]="stopsForm()" [list]="service.stops()" [titleForm]="'Crear parada'" [titleList]="'Lista de Paradas'"
+(deleteItem)="service.deleteStop($event)" [bandera]="'stop'" (editIem)="service.editStop($event)"
+(itemToEdit)="service.stopSelectedToEdit($event)" (createItem)="service.createStop($event)"
+[editTitle]="'Editar parada'" [isEditing]="isEditing()" (clearItemToEdit)="service.stopToEdit.set(null)"
+/>
+
+

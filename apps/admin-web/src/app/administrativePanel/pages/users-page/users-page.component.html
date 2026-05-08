@@ -1,0 +1,5 @@
+<app-header [title]="'Usuarios'"/>
+<app-show-form [form]="usersForm()" [list]="service.users()" [titleForm]="'Crear Usuario'" [titleList]="'Lista de Usuarios'"
+[editTitle]="'Editar Usuario'" [isEditing]="false" (deleteItem)="service.deleteUser($event)"
+(createItem)="service.createUser($event)" [showFilter]="true"
+/>
