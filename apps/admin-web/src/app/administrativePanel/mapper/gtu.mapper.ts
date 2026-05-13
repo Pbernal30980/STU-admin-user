@@ -29,7 +29,7 @@ export class GtuMapper{
 
   static mapDataUsersToUser(item:  DataUsers): User{
     return {
-        id: item.id,
+        id: item.id.toString(),
         name: item.name,
         email: item.email,
         password: item.password,
@@ -43,8 +43,8 @@ export class GtuMapper{
 
   static mapDataAssignDriverToAssignDriver(item:  DataAssignDriver): AssignDriver{
     return {
-        id: item.id,
-        driverId: item.driverId,
+        id: item.id.toString(),
+        driverId: item.driverId.toString(),
         routeId: item.routeId,
       }
   }

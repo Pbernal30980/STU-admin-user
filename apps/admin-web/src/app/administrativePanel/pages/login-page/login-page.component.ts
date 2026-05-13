@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router'; // <-- Importamos el Router
 import { GtuAuthService } from '../../services/gtu-auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +14,6 @@ import { InfoModalComponent } from "../../components/infoModal/infoModal.compone
   templateUrl: './login-page.component.html',
   imports: [CommonModule, FormsModule, LoadingModalComponent, ResponseBackendModalComponent, InfoModalComponent],
 })
-
 export default class LoginPageComponent {
   email = signal('');
   showLogin = signal(true);
@@ -26,7 +26,8 @@ export default class LoginPageComponent {
   errorResponseMessage = signal('');
   errors = signal<LoginForm>({});
 
-  private auth = inject(GtuAuthService)
+  private auth = inject(GtuAuthService);
+  private router = inject(Router); // <-- Lo inyectamos para redirigir
 
   togglePasswordVisibility() {
     this.showPassword.set(!this.showPassword());
@@ -63,48 +64,65 @@ export default class LoginPageComponent {
 
     this.errors.set(errorObj);
     return Object.keys(errorObj).length === 0;
-
   }
 
-  onSubmitResetPassword(){
+  // Convertimos a async para manejar las respuestas de Firebase
+  async onSubmitResetPassword() {
     this.submitted.set(true);
-    if(this.validateResetPassword()) {
+    if (this.validateResetPassword()) {
       this.isLoading.set(true);
-      this.auth.resetPassword(this.email());
-
-    }
-    setTimeout(() => {
-      if (this.auth.responseStatus() !== 200) {
+      try {
+        await this.auth.resetPassword(this.email());
+        this.showInfoModal.set(true);
+        this.email.set('');
+      } catch (error: any) {
+        this.errorResponse.set(true);
+        this.errorResponseMessage.set(this.getFirebaseErrorMessage(error.code));
+      } finally {
+        // El finally se ejecuta siempre, ya sea éxito o error
         this.isLoading.set(false);
         this.submitted.set(false);
-        this.errorResponse.set(true);
-        this.email.set('');
-        this.errorResponseMessage.set(this.auth.responseMessage());
-        return;
-      };
-
-      this.isLoading.set(false);
-      this.showInfoModal.set(true);
-      this.submitted.set(false);
-      this.email.set('');
-    }, 2000);
-
+      }
+    }
   }
-  onSubmit() {
+
+  // Convertimos a async para esperar la validación real
+  async onSubmit() {
     this.submitted.set(true);
     if (this.validate()) {
       this.isLoading.set(true);
-      this.auth.login(this.email(), this.password());
-
-      setTimeout(() => {
-        if (this.auth.responseStatus() !== 200) {
-          this.isLoading.set(false);
-          this.submitted.set(false);
-          this.errorResponse.set(true);
-          this.errorResponseMessage.set(this.auth.responseMessage());
-        }
-      }, 2000);
+      try {
+        // Intentamos iniciar sesión con Firebase
+        await this.auth.login(this.email(), this.password());
+        
+        // Si no hay errores, redirigimos al instante
+        this.router.navigate(['/dashboard/home']);
+      } catch (error: any) {
+        // Si Firebase rechaza la contraseña o correo, mostramos tu modal de error
+        this.errorResponse.set(true);
+        this.errorResponseMessage.set(this.getFirebaseErrorMessage(error.code));
+      } finally {
+        this.isLoading.set(false);
+        this.submitted.set(false);
+      }
     }
+  }
 
+  // Diccionario para traducir los errores en inglés de Firebase a los mensajes de tu UI
+  private getFirebaseErrorMessage(errorCode: string): string {
+    switch (errorCode) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'Correo o contraseña incorrectos.';
+      case 'auth/invalid-email':
+        return 'El formato del correo es inválido.';
+      case 'auth/user-disabled':
+        return 'Esta cuenta ha sido deshabilitada por el administrador.';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos fallidos. Intenta de nuevo más tarde.';
+      default:
+        return 'Ocurrió un error al conectarse con el servidor.';
+    }
   }
 }

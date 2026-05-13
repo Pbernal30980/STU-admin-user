@@ -16,7 +16,7 @@ export class ShowFormComponent {
   editIem = output<Record<string,string>>();
   editTitle = input.required<string>();
   isEditing = input.required<boolean>();
-  deleteItem = output<number>();
+  deleteItem = output<string | number>();
   form = input.required<Form[]>();
   list = input.required<Stops[] | Routes[] | User[]>();
   bandera = input<string>();

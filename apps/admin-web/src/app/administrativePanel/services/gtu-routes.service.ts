@@ -48,7 +48,7 @@ export class GtuRoutesService {
     console.info('[GtuRoutesService] createRoute: pendiente integración Firebase', route);
   }
 
-  deleteRoute(id: number) {
+  deleteRoute(id: string | number) {
     // TODO: Firebase — eliminar documento /routes/{id}
     this.routes.update((prev) => prev.filter((r) => r.id !== id));
     console.info('[GtuRoutesService] deleteRoute: pendiente integración Firebase', id);

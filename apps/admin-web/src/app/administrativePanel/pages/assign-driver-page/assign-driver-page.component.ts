@@ -27,12 +27,12 @@ export default class AssignDriverPageComponent {
     return route ? route.name : undefined;
   }
 
-  getUserNameById(userId: number): string | undefined {
+  getUserNameById(userId: string): string | undefined {
     const user = this.serviceUser.userDriver()?.find((user) => user.id === userId);
     return user ? user.name : undefined;
   }
 
-  deleteAssignment(assignmentId: number) {
+  deleteAssignment(assignmentId: string) {
     this.serviceAssignDriver.deleteDriverAssignment(assignmentId);
   }
 }

@@ -63,7 +63,7 @@ export interface LoginForm{
 
 
 export interface User{
-  id?: number;
+  id?: string; // <-- Cambia number por string, y ponle el ? por si es opcional al crearlo
   name: string;
   email: string;
   password: string;
@@ -72,8 +72,8 @@ export interface User{
 }
 
 export interface AssignDriver{
-  id? : number;
-  driverId: number;
+  id? : string;
+  driverId: string;
   routeId: number;
 }
 

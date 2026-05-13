@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  authBypass: true,
+  authBypass: false,
   // Variables visuales del menú
   companyName: 'STU',
   companySubName: 'Panel Administrativo',

@@ -16,14 +16,14 @@ export class GtuAssignDriverService {
     console.info('[GtuAssignDriverService] loadData: pendiente integración Firebase');
   }
 
-  createDriverAssignment(routeId: number, driverId: number) {
+  createDriverAssignment(routeId: number, driverId: string) {
     // TODO: Firebase — crear documento en /assignments
-    const tempId = Date.now();
+    const tempId = Date.now().toString();
     this.assignDrivers.update((prev) => [...prev, { id: tempId, routeId, driverId }]);
     console.info('[GtuAssignDriverService] createDriverAssignment: pendiente Firebase', { routeId, driverId });
   }
 
-  deleteDriverAssignment(id: number) {
+  deleteDriverAssignment(id: string) {
     // TODO: Firebase — eliminar documento /assignments/{id}
     this.assignDrivers.update((prev) => prev.filter((a) => a.id !== id));
     console.info('[GtuAssignDriverService] deleteDriverAssignment: pendiente Firebase', id);

@@ -15,7 +15,7 @@ export class ToLisComponent {
   reportsOpen = false;
   openForm = output<void>();
   itemToEdit = output<Stops | Routes | User>();
-  deleteItem = output<number>();
+  deleteItem = output<string | number>();
   currentRole = localStorage.getItem('userRole');
   buttonName = input.required<string>();
   titlePage = input.required<string>();
@@ -33,7 +33,7 @@ export class ToLisComponent {
     if (this.selectedFilters().length === 0) return this.list();
 
     return this.list().filter((item: any) =>
-      this.selectedFilters().includes(item.role)
+      this.selectedFilters().includes(item.role.toUpperCase())
     );
   }
 
@@ -65,8 +65,9 @@ export class ToLisComponent {
 
   deleteItemList() {
     const id = this.itemChosen()?.id;
-    id != null && typeof id === 'number' && this.deleteItem.emit(id);
-
+    if (id !== undefined && id !== null) {
+      this.deleteItem.emit(id);
+    }
   }
 
   editItemList() {

@@ -52,7 +52,7 @@ export class GtuStopsService {
     console.info('[GtuStopsService] createStop: pendiente integración Firebase', stop);
   }
 
-  deleteStop(id: number) {
+  deleteStop(id: string | number) {
     // TODO: Firebase — eliminar documento /stops/{id}
     this.stops.update((prev) => prev.filter((s) => s.id !== id));
     console.info('[GtuStopsService] deleteStop: pendiente integración Firebase', id);

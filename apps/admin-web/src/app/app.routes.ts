@@ -1,6 +1,9 @@
 import { Route } from '@angular/router';
 import { environment } from '../environments/environment';
-// import { authGuard } from '../auth/auth.guard'; // Descomenta esto cuando pases tu carpeta auth
+
+import { AuthGuard, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['/login']);
 
 export const appRoutes: Route[] = [
   {
@@ -35,9 +38,9 @@ export const appRoutes: Route[] = [
     redirectTo: 'dashboard/assign-driver'
   },
   {
-    // canActivate: [authGuard], // Comentado temporalmente para probar la UI
     path: 'dashboard',
-    // canActivateChild: [authGuard], // Comentado temporalmente para probar la UI
+    canActivate: [AuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
     loadComponent: () => import('./administrativePanel/pages/dashboard-page/dashboard-page.component'),
     children: [
       {
