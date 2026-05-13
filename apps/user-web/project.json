@@ -11,6 +11,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/user-web",
+        "index": "apps/user-web/src/index.html",
         "browser": "apps/user-web/src/main.ts",
         "tsConfig": "apps/user-web/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
@@ -49,6 +50,9 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "port": 4201
+      },
       "configurations": {
         "production": {
           "buildTarget": "user-web:build:production"

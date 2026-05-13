@@ -1,14 +1,17 @@
 <section class="glass-panel fixed top-3 z-40 rounded-3xl" style="left: 236px; width: calc(100% - 252px);">
   <div class="flex items-center justify-between gap-4 px-5 py-4">
     <div class="min-w-0">
-      <p class="text-xs uppercase tracking-[0.35em] text-slate-500">Panel administrativo</p>
+      <p class="text-xs uppercase tracking-[0.35em] text-stu-text/60">Panel administrativo</p>
       <div class="mt-1 flex items-center gap-3">
-        <h1 class="truncate text-2xl font-bold text-slate-900">{{ title() }}</h1>
-        <span class="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 sm:inline-flex">En línea</span>
+        <h1 class="truncate text-2xl font-bold text-stu-text">{{ title() }}</h1>
+        <span class="hidden rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500 sm:inline-flex border border-emerald-500/20">En línea</span>
       </div>
-      <p class="mt-1 text-sm text-slate-600">Usuario en sesión {{ userName }}</p>
+      <p class="mt-1 text-sm text-stu-text/70">Usuario en sesión {{ userName }}</p>
     </div>
     <div class="flex items-center gap-3">
+      <button (click)="toggleTheme()" class="flex h-10 w-10 items-center justify-center rounded-full bg-stu-input text-stu-text transition hover:bg-stu-border focus:outline-none focus:ring-2 focus:ring-stu-accent" title="Alternar tema">
+        <i class="fa-solid" [class.fa-moon]="!isDarkMode" [class.fa-sun]="isDarkMode"></i>
+      </button>
       <app-search-header></app-search-header>
       <app-notification-header></app-notification-header>
       <app-profile-header></app-profile-header>

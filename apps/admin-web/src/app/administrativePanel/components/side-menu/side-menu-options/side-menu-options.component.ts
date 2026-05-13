@@ -15,32 +15,32 @@ export class SideMenuOptionsComponent {
       icon: 'fa-solid fa-house',
       label: 'Inicio',
       route: '/dashboard/home',
-      style: 'color:#FFFFFF;'
+      style: ''
     },
     {
       icon: 'fa-solid fa-bus',
       label: 'Rutas',
       route: '/dashboard/routes',
-      style: 'color:#FFFFFF;'
+      style: ''
     },
     {
       icon: 'fa-solid fa-hand',
       label: 'Paradas',
       route: '/dashboard/stops',
-      style: 'color:#FFFFFF;'
+      style: ''
     },
 
     {
       icon: 'fa-solid fa-users',
       label: 'Usuarios',
       route: '/dashboard/users',
-      style: 'color:#FFFFFF;'
+      style: ''
     },
     {
       icon: 'fa-solid fa-route',
       label: 'Asignar Conductor',
       route: '/dashboard/assign-driver',
-      style: 'color:#FFFFFF;'
+      style: ''
     },
 ]
 }

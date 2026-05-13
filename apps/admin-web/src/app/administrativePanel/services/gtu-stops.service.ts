@@ -1,26 +1,18 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { StopsResponse } from '../interfaces/reponses.interface';
-import { environment } from '../../../environments/environment';
-import { GtuMapper } from '../mapper/gtu.mapper';
+// TODO: Migrar a Firebase. Las llamadas HTTP al backend legacy han sido desactivadas.
+import { Injectable, signal, inject } from '@angular/core';
 import { Stops } from '../interfaces/models.interface';
 import { GtuNeighborhoodsService } from './gtu-neighborhoods.service';
-import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class GtuStopsService {
 
-  private http = inject(HttpClient);
-  private router = inject(Router);
   neighborhoodService = inject(GtuNeighborhoodsService);
   stopToEdit = signal<Stops | null>(null);
   stopsSelected = signal<Stops[]>([]);
   stops = signal<Stops[]>([]);
 
-
-
   constructor() {
-    this.loadStops();
+    // Firebase integration pending — no HTTP calls made
   }
 
   mapRecordFormToStop(formValues: Record<string, string>): Stops {
@@ -31,43 +23,21 @@ export class GtuStopsService {
       neighborhoodId: this.neighborhoodService.neighborhoodSelected()!.id,
       latitude: this.neighborhoodService.neighborhoodLatitudeSelected()!,
       longitude: this.neighborhoodService.neighborhoodLongitudeSelected()!,
-
     };
   }
 
   loadStops() {
-    this.http.get<StopsResponse>(environment.backEndGTU_RouteStop + '/stops',
-      {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-        },
-        observe: 'response',
-      }
-    )
-      .subscribe({
-        next: (response) => {
-          const res = response.body!;
-          const mapper = GtuMapper.mapDataStopsToStopsArray(res.data);
-          this.stops.set(mapper);
-        },
-        error: (error) => {
-          if (error.status === 401 && !environment.authBypass) {
-            alert('No tienes permisos para acceder a las paradas. Por favor, vuelve a iniciar sesión.');
-            localStorage.clear();
-            this.router.navigate(['/login']);
-          }
-          alert('Error al cargar las paradas: ' + error.error.message);
-        }
-      })
+    // TODO: Firebase — leer colección /stops
+    console.info('[GtuStopsService] loadStops: pendiente integración Firebase');
   }
 
   addStops(stop: Stops) {
-    if (this.stopsSelected().some((item) => item.id === stop.id)) return;
+    if (this.stopsSelected().some((s) => s.id === stop.id)) return;
     this.stopsSelected.update((prev) => [...prev, stop]);
   }
 
   removeStops(stop: Stops) {
-    this.stopsSelected.update((prev) => prev.filter((item) => item.id !== stop.id));
+    this.stopsSelected.update((prev) => prev.filter((s) => s.id !== stop.id));
   }
 
   clearStopsSelected() {
@@ -75,102 +45,32 @@ export class GtuStopsService {
   }
 
   createStop(form: Record<string, string>) {
+    // TODO: Firebase — crear documento en /stops
     const stop = this.mapRecordFormToStop(form);
-    this.http.post<StopsResponse>(environment.backEndGTU_RouteStop + '/stops', {
-      name: stop.name,
-      description: stop.description,
-      neighborhoodId: stop.neighborhoodId,
-      latitude: stop.latitude,
-      longitude: stop.longitude,
-    }, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-      },
-      observe: 'response',
-    })
-      .subscribe({
-        next: (response) => {
-          const res = response.body!;
-          if (!Array.isArray(res.data)) {
-            const mapper = GtuMapper.mapDataStopsToStops(res.data);
-            this.stops.update((prev) => [...prev, mapper]);
-          }
-        },
-        error: (error) => {
-          if (error.status === 401 && !environment.authBypass) {
-            alert('No tienes permisos para crear a las paradas. Por favor, vuelve a iniciar sesión.');
-            localStorage.clear();
-            this.router.navigate(['/login']);
-          }
-          alert('Error al crear la parada: ' + error.error.message);
-        }
-      });
-
+    const tempId = Date.now();
+    this.stops.update((prev) => [...prev, { ...stop, id: tempId }]);
+    console.info('[GtuStopsService] createStop: pendiente integración Firebase', stop);
   }
 
   deleteStop(id: number) {
-    this.http.delete(environment.backEndGTU_RouteStop + '/stops/' + id,
-      {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-        },
-        observe: 'response',
-      }
-    ).subscribe({
-      next: (response) => {
-        const res = response.body!;
-        this.stops.update((prev) => prev.filter((item) => item.id !== id));
-      },
-      error: (error) => {
-        if (error.status === 401 && !environment.authBypass) {
-          alert('No tienes permisos para acceder a las paradas. Por favor, vuelve a iniciar sesión.');
-          localStorage.clear();
-          this.router.navigate(['/login']);
-        }
-        alert('Error al eliminar la parada: ' + error.error.message);
-      }
-
-    });
+    // TODO: Firebase — eliminar documento /stops/{id}
+    this.stops.update((prev) => prev.filter((s) => s.id !== id));
+    console.info('[GtuStopsService] deleteStop: pendiente integración Firebase', id);
   }
 
   stopSelectedToEdit(stop: Stops) {
     this.stopToEdit.set(stop);
-    this.neighborhoodService.addNeighborhood(this.neighborhoodService.neighborhoods().
-      find((neighborhood) => neighborhood.id === stop.neighborhoodId)!);
+    this.neighborhoodService.addNeighborhood(
+      this.neighborhoodService.neighborhoods().find((n) => n.id === stop.neighborhoodId)!
+    );
   }
 
   editStop(form: Record<string, string>) {
+    // TODO: Firebase — actualizar documento /stops/{id}
     const stop = this.mapRecordFormToStop(form);
-    this.stopToEdit.set(stop);
-    this.http.put<StopsResponse>(environment.backEndGTU_RouteStop + '/stops', {
-      id: this.stopToEdit()!.id,
-      name: this.stopToEdit()!.name,
-      description: this.stopToEdit()!.description,
-      neighborhoodId: this.stopToEdit()!.neighborhoodId,
-      latitude: this.stopToEdit()!.latitude,
-      longitude: this.stopToEdit()!.longitude,
-    }, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-      },
-      observe: 'response',
-    })
-      .subscribe({
-        next: (response) => {
-          const res = response.body!;
-          if (!Array.isArray(res.data)) {
-            const mapper = GtuMapper.mapDataStopsToStops(res.data);
-            this.stops.update((prev) => prev.map((item) => item.id === mapper.id ? mapper : item));
-          }
-        },
-        error: (error) => {
-          if (error.status === 401 && !environment.authBypass) {
-            alert('No tienes permisos para acceder a las paradas. Por favor, vuelve a iniciar sesión.');
-            localStorage.clear();
-            this.router.navigate(['/login']);
-          }
-          alert('Error al editar la parada: ' + error.error.message);
-        }
-      });
+    this.stops.update((prev) =>
+      prev.map((s) => (s.id === stop.id ? { ...s, ...stop } : s))
+    );
+    console.info('[GtuStopsService] editStop: pendiente integración Firebase', stop);
   }
 }

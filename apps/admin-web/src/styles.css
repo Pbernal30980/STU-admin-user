@@ -1,17 +1,89 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Theme Colors */
+    --color-stu-bg: 241 245 249; /* slate-100 */
+    --color-stu-panel: 255 255 255; /* white */
+    --color-stu-accent: 220 38 38; /* red-600 */
+    --color-stu-text: 15 23 42; /* slate-900 */
+    --color-stu-input: 226 232 240; /* slate-200 */
+    --color-stu-border: 203 213 225; /* slate-300 */
+    --color-stu-icon: 51 65 85; /* slate-700 - for icons in light mode */
+  }
+
+  .dark {
+    /* Dark Theme Colors */
+    --color-stu-bg: 27 28 40; /* #1b1c28 */
+    --color-stu-panel: 36 37 53; /* #242535 */
+    --color-stu-accent: 231 76 60; /* #E74C3C */
+    --color-stu-text: 248 250 252; /* slate-50 */
+    --color-stu-input: 22 23 34; /* #161722 */
+    --color-stu-border: 63 63 70; /* zinc-700 approx */
+  }
+
+  body {
+    @apply bg-stu-bg text-stu-text font-poppins antialiased transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .soft-input {
+    @apply w-full rounded-2xl border border-stu-border bg-stu-input px-4 py-3 text-sm text-stu-text transition placeholder:text-stu-text/40 focus:border-stu-accent focus:outline-none focus:ring-1 focus:ring-stu-accent;
+  }
+
+  .primary-button {
+    @apply w-full rounded-2xl bg-stu-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-stu-accent/90 focus:outline-none focus:ring-2 focus:ring-stu-accent focus:ring-offset-2 dark:focus:ring-offset-stu-bg;
+  }
+
+  .ghost-link {
+    @apply font-semibold text-stu-text/80 transition hover:text-stu-text hover:underline;
+  }
+
+  .nav-link-active {
+    @apply bg-stu-accent/15 text-stu-accent relative;
+  }
+  .nav-link-active::before {
+    content: '';
+    @apply absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-stu-accent;
+  }
+
+  .glass-panel {
+    @apply bg-stu-panel/80 backdrop-blur-xl border border-stu-border/50 shadow-sm transition-colors duration-300;
+  }
+
+  .dashboard-card {
+    @apply rounded-3xl bg-stu-panel border border-stu-border shadow-sm transition-colors duration-300;
+  }
+
+  .metric-card {
+    @apply rounded-[2rem] bg-stu-panel border border-stu-border shadow-md transition-colors duration-300;
+  }
+
+  .modal-surface {
+    @apply bg-stu-panel border border-stu-border shadow-xl rounded-2xl overflow-hidden;
+  }
+
+  .modal-backdrop {
+    @apply bg-black/60 backdrop-blur-sm;
+  }
+}
 
 /* Configuración global para las fuentes */
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Hide password reveal buttons in some browsers */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
-
 input[type="password"]::-webkit-credentials-auto-fill-button,
 input[type="password"]::-webkit-textfield-decoration-container {
   display: none !important;

@@ -1,12 +1,12 @@
-<div class="isolate bg-white px-6 mt-5 mb-5 py-4 sm:py-5 lg:px-8 rounded-md shadow-md">
-  <h2 class="text-2xl font-bold text-black" style="color: #4A90E2;font-family: 'Poppins', sans-serif;">{{
+<div class="isolate modal-surface px-6 mt-5 mb-5 py-4 sm:py-5 lg:px-8">
+  <h2 class="text-2xl font-bold text-stu-accent font-poppins">{{
     isEditing() ? editTitle() :title() }}
   </h2>
-  <div class="flex justify-end items-center mb-6 border-b border-slate-700 pb-2">
-    <button (click)="goComeBackList()" class="bg-emerald-500 hover:bg-emerald-800 text-white px-4 py-2 mr-2 rounded-md ">
+  <div class="flex justify-end items-center mb-6 border-b border-stu-border pb-2 gap-2">
+    <button (click)="goComeBackList()" class="ghost-link px-4 py-2 mr-2">
       Volver a la Lista
     </button>
-    <button (click)="sendForm()" class=" bg-emerald-500 hover:bg-emerald-800 text-white font-semibold py-2 px-4 rounded-md">
+    <button (click)="sendForm()" class="primary-button !w-auto !py-2 !px-4">
       {{isEditing() ? 'Confirmar Edicion' : 'Confirmar'}}
     </button>
   </div>
@@ -15,14 +15,14 @@
     <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
       @for (item of form(); track item) {
       <div class="sm:col-span-2">
-        <label [for]="item.title" class="block text-sm font-semibold leading-6 text-black">{{item.title}}</label>
+        <label [for]="item.title" class="block text-sm font-semibold leading-6 text-stu-text">{{item.title}}</label>
         <div class="mt-2.5">
           <input [type]="item.type" [name]="item.id" [id]="item.id" #inputRef [value]="item.value()"
            (input)="onInputChange(item,inputRef.value)"
-            class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset shadow-blue-400 ring-blue-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-300 sm:text-sm sm:leading-6">
+            class="soft-input">
         </div>
         @if (item.error?.()) {
-          <p class="mt-1 text-sm text-red-600">{{item?.error()}}</p>
+          <p class="mt-1 text-sm text-rose-500">{{item?.error()}}</p>
         }
       </div>
       }

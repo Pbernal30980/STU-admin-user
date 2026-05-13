@@ -1,20 +1,25 @@
-<div id="nav" class="mt-5 flex flex-1 flex-col gap-2 overflow-y-auto px-1 pb-4">
-  @for (item of menuOptions; track item.route) {
-  <a
-    [routerLink]="item.route"
-    routerLinkActive="nav-link-active"
-    class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-100/90 transition duration-200 hover:bg-white/10 hover:text-white"
-  >
-    <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-white/10">
-      <i [class]="item.icon" [style]="item.style"></i>
-    </span>
-    <span class="flex flex-col leading-tight">
-      <span class="text-[15px] font-semibold">{{item.label}}</span>
-      <span class="text-[11px] text-slate-200/70">Acceder</span>
-    </span>
-  </a>
-  }
-  <div class="mt-auto pt-4">
+<div id="nav" class="mt-5 flex flex-1 flex-col min-h-0">
+  <!-- Nav items: scrollable when screen is small -->
+  <div class="flex flex-col gap-2 overflow-y-auto flex-1 px-1 pb-2">
+    @for (item of menuOptions; track item.route) {
+    <a
+      [routerLink]="item.route"
+      routerLinkActive="nav-link-active"
+      class="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-stu-text/80 transition duration-200 hover:bg-stu-input hover:text-stu-text"
+    >
+      <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-stu-input text-slate-600 dark:text-stu-text ring-1 ring-stu-border transition-colors group-hover:bg-stu-accent group-hover:text-white group-[.nav-link-active]:bg-stu-accent group-[.nav-link-active]:text-white">
+        <i [class]="item.icon" [style]="item.style"></i>
+      </span>
+      <span class="flex flex-col leading-tight">
+        <span class="text-[15px] font-semibold">{{item.label}}</span>
+        <span class="text-[11px] text-stu-text/50">Acceder</span>
+      </span>
+    </a>
+    }
+  </div>
+
+  <!-- Logout: always fixed at bottom, never scrolls away -->
+  <div class="shrink-0 px-1">
     <app-logout-button />
   </div>
 </div>
