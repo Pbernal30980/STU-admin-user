@@ -15,21 +15,21 @@ export interface Form {
   value: WritableSignal<string>;
   validation?: (value: string) => string | null;
   error?: WritableSignal<string | null>;
+  step?: string;
 }
 
 export interface Neighborhood {
-  id: number;
+  id: string;
   name: string;
 }
 
 export interface Stops {
-  id?: number;
+  id?: string;
   name: string;
   description: string;
-  neighborhoodId: number;
+  neighborhoodId: string;
   latitude: number;
   longitude: number;
-
 }
 
 export interface Location{
@@ -40,14 +40,13 @@ export interface Location{
 }
 
 export interface Routes {
-  id?: number;
+  id?: string; // <-- Cambiar number por string
   name: string;
   description: string;
   startTime: string,
   endTime: string,
-  neighborhoods: number[];
-  stops: number[];
-
+  neighborhoods: string[]; // <-- Asegúrate de que los arreglos reciban strings
+  stops: string[];
 }
 
 export interface SearchType{
@@ -74,7 +73,5 @@ export interface User{
 export interface AssignDriver{
   id? : string;
   driverId: string;
-  routeId: number;
+  routeId: string;
 }
-
-

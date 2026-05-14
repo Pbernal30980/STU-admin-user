@@ -40,17 +40,19 @@ export default class RoutesPageComponent {
      title: 'Horario de inicio',
      type: 'time',
      id: 'startTime' ,
-     value: signal(route ? route.startTime : ''),
+     value: signal(route ? route.startTime.slice(0, 5) : ''),
       error: signal(null),
-      validation: (val: string) => val.trim() === '' ? 'El horario de inicio es obligatorio' : null
+      validation: (val: string) => val.trim() === '' ? 'El horario de inicio es obligatorio' : null,
+      step: '60'
     },
     {
       title: 'Horario de Finalización',
       type: 'time',
       id: 'endTime',
-      value: signal(route ? route.endTime : ''),
+      value: signal(route ? route.endTime.slice(0, 5) : ''),
       error: signal(null),
-      validation: (val: string) => val.trim() === '' ? 'El horario de finalización es obligatorio' : null
+      validation: (val: string) => val.trim() === '' ? 'El horario de finalización es obligatorio' : null,
+      step: '60'
      },
 
    ]});

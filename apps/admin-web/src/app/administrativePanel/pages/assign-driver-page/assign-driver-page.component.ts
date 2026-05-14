@@ -22,7 +22,7 @@ export default class AssignDriverPageComponent {
       this.serviceUser.userSelected()?.id!,
     )
   }
-  getRouteNameById(routeId: number): string | undefined {
+  getRouteNameById(routeId: string): string | undefined {
     const route = this.serviceRoute.routes()?.find((route) => route.id === routeId);
     return route ? route.name : undefined;
   }

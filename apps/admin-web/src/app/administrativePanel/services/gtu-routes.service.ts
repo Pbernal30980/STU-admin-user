@@ -1,61 +1,97 @@
-// TODO: Migrar a Firebase. Las llamadas HTTP al backend legacy han sido desactivadas.
-// Todos los métodos mantienen su firma original para facilitar la integración con Firebase.
-import { Injectable, signal } from '@angular/core';
-import { Routes } from '../interfaces/models.interface';
+import { Injectable, signal, inject } from '@angular/core';
+import { Routes, Neighborhood, Stops } from '../interfaces/models.interface';
 import { GtuNeighborhoodsService } from './gtu-neighborhoods.service';
 import { GtuStopsService } from './gtu-stops.service';
-import { inject } from '@angular/core';
-
+// Importaciones de Firebase
+import { Firestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from '@angular/fire/firestore';
 @Injectable({ providedIn: 'root' })
 export class GtuRoutesService {
-
   neighborhoodsService = inject(GtuNeighborhoodsService);
   stopsService = inject(GtuStopsService);
+  private firestore = inject(Firestore);
+  // Referencia a la colección 'Rutas' en Firestore
+  private routesCollection = collection(this.firestore, 'Rutas');
   routes = signal<Routes[]>([]);
   routeToEdit = signal<Routes | null>(null);
   routeSelected = signal<Routes | null>(null);
-
   constructor() {
-    // Firebase integration pending — no HTTP calls made
+    // Escucha en tiempo real de la colección Rutas
+    this.loadRoutes();
   }
-
   mapRecordFormToRoute(formValues: Record<string, string>): Routes {
     return {
       id: this.routeToEdit()?.id || undefined,
       name: formValues['name'],
       description: formValues['description'],
-      neighborhoods: this.neighborhoodsService.neighborhoodsSelected().map((n) => n.id),
-      stops: this.stopsService.stopsSelected().map((s) => s.id!),
+      // Guardamos los IDs de los barrios y paradas seleccionados
+      neighborhoods: this.neighborhoodsService.neighborhoodsSelected()
+        .filter((n): n is Neighborhood => !!n && typeof n.id === 'string')
+        .map((n) => n.id) as string[],
+      stops: this.stopsService.stopsSelected()
+        .filter((s): s is Stops => !!s && typeof s.id === 'string')
+        .map((s) => s.id) as string[],
       startTime: formValues['startTime'],
       endTime: formValues['endTime'],
     };
   }
-
   loadRoutes() {
-    // TODO: Firebase — leer colección /routes
-    console.info('[GtuRoutesService] loadRoutes: pendiente integración Firebase');
+    onSnapshot(this.routesCollection, (snapshot) => {
+      const mappedRoutes: Routes[] = snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          name: data['Nombre'] || 'Ruta sin nombre',
+          description: data['Descripcion'] || '',
+          neighborhoods: data['Barrios'] || [],
+          stops: data['Paradas'] || [],
+          startTime: data['HoraInicio'] || '',
+          endTime: data['HoraFin'] || ''
+        };
+      });
+      // Actualiza la tabla automáticamente
+      this.routes.set(mappedRoutes);
+    }, (error) => {
+      console.error('[GtuRoutesService] Error al leer rutas:', error);
+    });
   }
-
   addRoute(route: Routes) {
     this.routeSelected.set(route);
   }
-
-  createRoute(form: Record<string, string>) {
-    // TODO: Firebase — crear documento en /routes
+  async createRoute(form: Record<string, string>) {
     const route = this.mapRecordFormToRoute(form);
-    const tempId = Date.now();
-    this.routes.update((prev) => [...prev, { ...route, id: tempId }]);
-    console.info('[GtuRoutesService] createRoute: pendiente integración Firebase', route);
+    // Mapeo a español para Firebase
+    const newRoute = {
+      Nombre: route.name,
+      Descripcion: route.description,
+      Barrios: route.neighborhoods,
+      Paradas: route.stops,
+      HoraInicio: route.startTime,
+      HoraFin: route.endTime
+    };
+    try {
+      await addDoc(this.routesCollection, newRoute);
+      console.info('[GtuRoutesService] Ruta creada exitosamente');
+      
+      // Limpiamos las selecciones temporales del formulario
+      this.neighborhoodsService.neighborhoodsSelected.set([]);
+      this.stopsService.stopsSelected.set([]);
+    } catch (error) {
+      console.error('[GtuRoutesService] Error al crear ruta:', error);
+    }
   }
-
-  deleteRoute(id: string | number) {
-    // TODO: Firebase — eliminar documento /routes/{id}
-    this.routes.update((prev) => prev.filter((r) => r.id !== id));
-    console.info('[GtuRoutesService] deleteRoute: pendiente integración Firebase', id);
+  async deleteRoute(id: string | number) {
+    try {
+      const routeDocRef = doc(this.firestore, `Rutas/${id.toString()}`);
+      await deleteDoc(routeDocRef);
+      console.info('[GtuRoutesService] Ruta eliminada exitosamente');
+    } catch (error) {
+      console.error('[GtuRoutesService] Error al eliminar ruta:', error);
+    }
   }
-
   routeSelectedToEdit(route: Routes) {
     this.routeToEdit.set(route);
+    
+    // Rellenamos las señales de selecciones previas para que el UI muestre qué barrios/paradas tenía
     this.neighborhoodsService.neighborhoodsSelected.set(
       this.neighborhoodsService.neighborhoods().filter((n) =>
         route.neighborhoods.some((item) => item === n.id)
@@ -67,16 +103,31 @@ export class GtuRoutesService {
       )
     );
   }
-
-  editRoute(form: Record<string, string>) {
-    // TODO: Firebase — actualizar documento /routes/{id}
+  async editRoute(form: Record<string, string>) {
     const route = this.mapRecordFormToRoute(form);
-    this.routes.update((prev) =>
-      prev.map((r) => (r.id === route.id ? { ...r, ...route } : r))
-    );
-    console.info('[GtuRoutesService] editRoute: pendiente integración Firebase', route);
+    
+    if (!route.id) return;
+    const routeData = {
+      Nombre: route.name,
+      Descripcion: route.description,
+      Barrios: route.neighborhoods,
+      Paradas: route.stops,
+      HoraInicio: route.startTime,
+      HoraFin: route.endTime
+    };
+    try {
+      const routeDocRef = doc(this.firestore, `Rutas/${route.id}`);
+      await updateDoc(routeDocRef, routeData);
+      console.info('[GtuRoutesService] Ruta actualizada exitosamente');
+      
+      // Cerramos el modo edición y limpiamos
+      this.routeToEdit.set(null);
+      this.neighborhoodsService.neighborhoodsSelected.set([]);
+      this.stopsService.stopsSelected.set([]);
+    } catch (error) {
+      console.error('[GtuRoutesService] Error al actualizar ruta:', error);
+    }
   }
-
   clearRouteSelected() {
     this.routeSelected.set(null);
   }

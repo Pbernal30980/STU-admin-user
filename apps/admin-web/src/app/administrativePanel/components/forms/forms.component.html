@@ -19,6 +19,7 @@
         <div class="mt-2.5">
           <input [type]="item.type" [name]="item.id" [id]="item.id" #inputRef [value]="item.value()"
            (input)="onInputChange(item,inputRef.value)"
+           [attr.step]="item.step"
             class="soft-input">
         </div>
         @if (item.error?.()) {

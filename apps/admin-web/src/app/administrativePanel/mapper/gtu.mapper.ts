@@ -4,7 +4,7 @@ import { DataAssignDriver, DataNeighborhood, DataRoutes, DataStops, DataUsers} f
 export class GtuMapper{
   static mapDataNeighborhoodToNeighborhood(item:  DataNeighborhood): Neighborhood{
     return {
-        id: item.id,
+        id: item.id.toString(),
         name: item.name,
       }
   }
@@ -13,10 +13,10 @@ export class GtuMapper{
   }
   static mapDataStopsToStops(item: DataStops): Stops{
     return {
-        id: item.id,
+        id: item.id.toString(),
         name: item.name,
         description: item.description,
-        neighborhoodId: item.neighborhoodId,
+        neighborhoodId: item.neighborhoodId.toString(),
         latitude: item.latitude,
         longitude: item.longitude,
     }
@@ -45,7 +45,7 @@ export class GtuMapper{
     return {
         id: item.id.toString(),
         driverId: item.driverId.toString(),
-        routeId: item.routeId,
+        routeId: item.routeId.toString(),
       }
   }
   static mapDataAssignDriverToAssignDriverArray(items : DataAssignDriver[]): AssignDriver[] {
@@ -54,13 +54,13 @@ export class GtuMapper{
 
   static mapDataRoutesToRoutes(item: DataRoutes): Routes{
     return {
-        id: item.id,
+        id: item.id.toString(),
         name: item.name,
         description: item.description,
         startTime: item.startTime,
         endTime: item.endTime,
-        neighborhoods: item.neighborhoodIds,
-        stops: item.stops,
+        neighborhoods: item.neighborhoodIds.map(id => id.toString()),
+        stops: item.stops.map(id => id.toString()),
     }
   }
   static mapDataRoutesToRoutesArray(items : DataRoutes[]): Routes[] {

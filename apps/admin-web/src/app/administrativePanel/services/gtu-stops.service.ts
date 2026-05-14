@@ -17,7 +17,7 @@ export class GtuStopsService {
 
   mapRecordFormToStop(formValues: Record<string, string>): Stops {
     return {
-      id: this.stopToEdit()?.id || 0,
+      id: this.stopToEdit()?.id || '',
       name: formValues['name'],
       description: formValues['description'],
       neighborhoodId: this.neighborhoodService.neighborhoodSelected()!.id,
@@ -47,7 +47,7 @@ export class GtuStopsService {
   createStop(form: Record<string, string>) {
     // TODO: Firebase — crear documento en /stops
     const stop = this.mapRecordFormToStop(form);
-    const tempId = Date.now();
+    const tempId = Date.now().toString();
     this.stops.update((prev) => [...prev, { ...stop, id: tempId }]);
     console.info('[GtuStopsService] createStop: pendiente integración Firebase', stop);
   }
@@ -65,9 +65,11 @@ export class GtuStopsService {
     );
   }
 
-  editStop(form: Record<string, string>) {
+  async editStop(form: Record<string, string>) {
     // TODO: Firebase — actualizar documento /stops/{id}
     const stop = this.mapRecordFormToStop(form);
+    // Para mantener consistencia con el patrón de Firebase, implementaremos la actualización real
+    // Por ahora mantenemos la lógica anterior pero con tipos correctos
     this.stops.update((prev) =>
       prev.map((s) => (s.id === stop.id ? { ...s, ...stop } : s))
     );
