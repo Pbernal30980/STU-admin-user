@@ -38,6 +38,11 @@ export const appRoutes: Route[] = [
     redirectTo: 'dashboard/assign-driver'
   },
   {
+    path: 'neighborhoods-page',
+    pathMatch: 'full',
+    redirectTo: 'dashboard/neighborhoods'
+  },
+  {
     path: 'dashboard',
     canActivate: [AuthGuard],
     data: { authGuardPipe: redirectUnauthorizedToLogin },
@@ -62,6 +67,10 @@ export const appRoutes: Route[] = [
       {
         path: 'assign-driver',
         loadComponent: () => import('./administrativePanel/pages/assign-driver-page/assign-driver-page.component')
+      },
+      {
+        path: 'neighborhoods',
+        loadComponent: () => import('./administrativePanel/pages/neighborhoods-page/neighborhoods-page.component')
       },
       {
         path: '**',

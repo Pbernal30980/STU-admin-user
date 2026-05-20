@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { ToLisComponent } from "../../administrativePanel/components/list/list-component";
 import { FormsComponent } from "../../administrativePanel/components/forms/forms.component";
-import type { Form, Routes, Stops, User } from '../../administrativePanel/interfaces/models.interface';
+import type { Form, Routes, Stops, User, Neighborhood } from '../../administrativePanel/interfaces/models.interface';
 
 @Component({
   selector: 'app-show-form',
@@ -18,8 +18,11 @@ export class ShowFormComponent {
   isEditing = input.required<boolean>();
   deleteItem = output<string | number>();
   form = input.required<Form[]>();
-  list = input.required<Stops[] | Routes[] | User[]>();
+  list = input.required<Stops[] | Routes[] | User[] | Neighborhood[]>();
   bandera = input<string>();
+  showMapSelector = input<boolean>(false);
+  selectedLat = input<number | null>(null);
+  selectedLng = input<number | null>(null);
   clearItemToEdit = output<void>();
 
   showForm = false;
@@ -28,7 +31,5 @@ export class ShowFormComponent {
   toggleForm(){
     this.showForm = !this.showForm;
     this.clearItemToEdit.emit();
-
   }
-
- }
+}

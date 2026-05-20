@@ -1,16 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import type { MenuOption } from '../../../interfaces/models.interface';
-import { LogoutButtonComponent } from "../../logout/logout-button.component";
 
 @Component({
   selector: 'app-side-menu-options',
-  imports: [RouterLink, RouterLinkActive, LogoutButtonComponent],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './side-menu-options.component.html',
 })
 export class SideMenuOptionsComponent {
   menuOptions: MenuOption[] = [
-
     {
       icon: 'fa-solid fa-house',
       label: 'Inicio',
@@ -29,7 +27,12 @@ export class SideMenuOptionsComponent {
       route: '/dashboard/stops',
       style: ''
     },
-
+    {
+      icon: 'fa-solid fa-map-marker-alt',
+      label: 'Barrios',
+      route: '/dashboard/neighborhoods',
+      style: ''
+    },
     {
       icon: 'fa-solid fa-users',
       label: 'Usuarios',
@@ -42,5 +45,5 @@ export class SideMenuOptionsComponent {
       route: '/dashboard/assign-driver',
       style: ''
     },
-]
+  ];
 }

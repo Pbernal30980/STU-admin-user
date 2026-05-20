@@ -3,11 +3,11 @@ import type { Form } from '../../interfaces/models.interface';
 import { ToastComponent } from "../toast/toast.component";
 import { MutipleItemsListComponent } from "./multiple-items-list-form/multiple-items-list.component";
 import { SingleListFormComponent } from "./single-list-form-item-selected/single-list-form-item-selected.component";
-import { LocationsComponent } from "../locations/locations.component";
+import { MapSelectorComponent } from "../map-selector/map-selector.component";
 
 @Component({
   selector: 'app-forms',
-  imports: [ToastComponent, SingleListFormComponent, MutipleItemsListComponent, LocationsComponent],
+  imports: [ToastComponent, SingleListFormComponent, MutipleItemsListComponent, MapSelectorComponent],
   templateUrl: './forms.component.html',
 })
 export class FormsComponent {
@@ -17,6 +17,9 @@ export class FormsComponent {
   isEditing = input.required<boolean>();
   editTitle = input.required<string>();
   banderaRouteOrStop = input<string>();
+  showMapSelector = input<boolean>(false);
+  selectedLat = input<number | null>(null);
+  selectedLng = input<number | null>(null);
   form = input.required<Form[]>();
   title = input.required<string>();
   comeBackList = output<void>();
@@ -35,7 +38,9 @@ export class FormsComponent {
   goComeBackList() {
     this.comeBackList.emit();
   }
+
   inputs = viewChildren<ElementRef<HTMLInputElement>>('inputRef');
+
   sendForm() {
     this.toastColor.set('');
     this.toastMessage.set('');
@@ -58,7 +63,7 @@ export class FormsComponent {
             setTimeout(() => {
               this.toastColor.set('red');
               this.toastMessage.set('Error en el formulario, por favor verifique los campos');
-            },0);
+            }, 0);
             return;
           }
         }
@@ -69,12 +74,49 @@ export class FormsComponent {
       this.toastColor.set('green');
       this.toastMessage.set('Formulario enviado correctamente');
     }, 0);
-    this.isEditing() ? this.editItem.emit(formValues) :
-    this.createItem.emit(formValues);
+    this.isEditing() ? this.editItem.emit(formValues) : this.createItem.emit(formValues);
 
     this.inputs().forEach((input) => {
       const inputElement = input.nativeElement;
       inputElement.value = '';
     });
+  }
+
+  onLatitudSeleccionada(lat: number) {
+    const latField = this.form().find(item => item.id === 'latitude');
+    if (latField) {
+      latField.value.set(lat.toString());
+      if (latField.validation && latField.error) {
+        latField.error.set(latField.validation(lat.toString()));
+      }
+    }
+  }
+
+  onLongitudSeleccionada(lng: number) {
+    const lngField = this.form().find(item => item.id === 'longitude');
+    if (lngField) {
+      lngField.value.set(lng.toString());
+      if (lngField.validation && lngField.error) {
+        lngField.error.set(lngField.validation(lng.toString()));
+      }
+    }
+  }
+
+  getFormLat(): number | null {
+    const latField = this.form().find(item => item.id === 'latitude');
+    if (latField) {
+      const val = parseFloat(latField.value() || '0');
+      return isNaN(val) ? null : val;
+    }
+    return this.selectedLat();
+  }
+
+  getFormLng(): number | null {
+    const lngField = this.form().find(item => item.id === 'longitude');
+    if (lngField) {
+      const val = parseFloat(lngField.value() || '0');
+      return isNaN(val) ? null : val;
+    }
+    return this.selectedLng();
   }
 }

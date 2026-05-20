@@ -3,6 +3,9 @@
 (deleteItem)="service.deleteStop($event)" [bandera]="'stop'" (editIem)="service.editStop($event)"
 (itemToEdit)="service.stopSelectedToEdit($event)" (createItem)="service.createStop($event)"
 [editTitle]="'Editar parada'" [isEditing]="isEditing()" (clearItemToEdit)="service.stopToEdit.set(null)"
+[showMapSelector]="true"
+[selectedLat]="service.stopToEdit()?.latitude || 0"
+[selectedLng]="service.stopToEdit()?.longitude || 0"
 />
 
 

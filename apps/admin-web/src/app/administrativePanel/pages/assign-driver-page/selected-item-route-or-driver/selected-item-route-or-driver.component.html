@@ -18,13 +18,13 @@
     <div class="w-full relative">
       <div class="w-full my-2 flex relative">
         <div class="flex flex-auto flex-wrap"></div>
-        <input [value]="selected()" placeholder="Search by position"
-          class="soft-input pr-10">
+        <input [value]="selected() || ''" [placeholder]="title() === 'Rutas' ? 'Seleccionar Ruta...' : 'Seleccionar Conductor...'"
+          class="soft-input pr-10 cursor-pointer" readonly (click)="toggleDropdown()">
         <div class="absolute right-0 top-0 bottom-0 text-stu-text/50 w-10 flex items-center justify-center border-l border-stu-border">
           <button (click)="toggleDropdown()"
             class="cursor-pointer w-full h-full flex items-center justify-center outline-none focus:outline-none hover:text-stu-text">
             <svg class="transition-transform duration-200 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
+              viewBox="0 0 24 24" stroke="currentColor" [class.rotate-180]="!isDropdownOpen">
               <polyline points="18 15 12 9 6 15"></polyline>
             </svg>
           </button>
@@ -39,20 +39,18 @@
         <div class="cursor-pointer w-full border-b border-stu-border/50 last:border-0 hover:bg-stu-input transition-colors">
           <div class="flex w-full items-center p-3 relative">
             <div class="w-full items-center flex">
-              <div (click)="add.emit(item)" class="w-full text-stu-text font-medium">{{item.name}}</div>
+              <div (click)="selectItem(item)" class="w-full text-stu-text font-medium">{{item.name}}</div>
             </div>
           </div>
         </div>
       </div>
       }
     </div>
-
-    <div class="h-28">
-
-
-    </div>
-
     }
 
   </div>
+
+  @if(isDropdownOpen){
+    <div class="h-28"></div>
+  }
 </div>

@@ -10,6 +10,7 @@ import { GtuStopsService } from '../../../services/gtu-stops.service';import { S
 })
 export class MutipleItemsSelectedListComponent {
   bandera = input.required<boolean>();
+  isOpen = input<boolean>(false);
   isDropdownOpen = output();
   stopsService = inject(GtuStopsService);
   neighborhoodService = inject(GtuNeighborhoodsService);

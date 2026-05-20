@@ -18,9 +18,9 @@
         <label [for]="item.title" class="block text-sm font-semibold leading-6 text-stu-text">{{item.title}}</label>
         <div class="mt-2.5">
           <input [type]="item.type" [name]="item.id" [id]="item.id" #inputRef [value]="item.value()"
-           (input)="onInputChange(item,inputRef.value)"
-           [attr.step]="item.step"
-            class="soft-input">
+            (input)="onInputChange(item,inputRef.value)"
+            [attr.step]="item.step"
+             class="soft-input">
         </div>
         @if (item.error?.()) {
           <p class="mt-1 text-sm text-rose-500">{{item?.error()}}</p>
@@ -37,12 +37,21 @@
     <app-single-list-form/>
 
     <div class="w-3/4 mx-auto m-5 h-full">
-
-      <app-locations [isEditing]="isEditing()"/>
+      
+      <!-- Selector de mapa para paradas -->
+      @if (showMapSelector()) {
+        <div class="map-selector-container mt-6">
+          <h3 class="text-lg font-medium mb-4">Selecciona ubicación en el mapa</h3>
+          <app-map-selector
+            [selectedLat]="getFormLat()"
+            [selectedLng]="getFormLng()"
+            (latitudeChanged)="onLatitudSeleccionada($event)"
+            (longitudeChanged)="onLongitudSeleccionada($event)"
+          />
+        </div>
+      }
     </div>
   }
 </div>
 
 <app-toast [message]="toastMessage()" [color]="toastColor()" ></app-toast>
-
-

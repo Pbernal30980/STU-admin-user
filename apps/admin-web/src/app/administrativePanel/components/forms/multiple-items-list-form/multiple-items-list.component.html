@@ -1,40 +1,37 @@
 <style>
-  .top-100 {
-    top: 100%
-  }
-
-  .bottom-100 {
-    bottom: 100%
-  }
-
   .max-h-select {
-    max-height: 100px;
+    max-height: 180px;
     overflow-y: auto;
   }
 </style>
-<div class="max-w-xl mt-5  sm:mt-5 mx-auto">
+<div class="max-w-xl mt-5 sm:mt-5 mx-auto">
 
   <div class="grid grid-cols-1 relative">
-    <label class="block text-sm font-semibold leading-6 text-black">{{bandera() ? "Barrios" : "Paradas"}}</label>
-    <app-multiple-items-selected [bandera]="bandera()" (isDropdownOpen)="toggleDropdown()" />
+    <label class="block text-sm font-semibold leading-6 text-stu-text">{{bandera() ? "Barrios" : "Paradas"}}</label>
+    <app-multiple-items-selected 
+      [bandera]="bandera()" 
+      [isOpen]="isDropdownOpen"
+      (isDropdownOpen)="toggleDropdown()" />
+    
     @if(isDropdownOpen){
     <div
-      class="absolute shadow  top-6/12 bg-white z-40 w-full lef-0 rounded max-h-select overflow-y-auto svelte-5uyqqj">
+      class="absolute shadow-xl bg-stu-panel border border-stu-border z-40 w-full left-0 top-full rounded-2xl max-h-select overflow-y-auto mt-2 transition-all duration-200">
       @for (item of (bandera() ? neighborhoodService.neighborhoods() : stopService.stops()); track item) {
-      <div class="flex flex-col w-full ">
-        <div class="cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-teal-100">
-          <div class="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative hover:border-teal-100">
-            <div class="w-full items-center flex">
-
-              <div (click)="itemsToAdd(item) " class="mx-2 leading-6  ">{{item.name}} </div>
-            </div>
+      <div class="flex flex-col w-full">
+        <div (click)="itemsToAdd(item)" 
+          class="cursor-pointer w-full border-b border-stu-border/30 last:border-b-0 hover:bg-stu-accent/10 hover:text-stu-accent transition-colors duration-150">
+          <div class="flex w-full items-center p-3 pl-4">
+            <div class="w-full text-sm font-medium text-stu-text">{{item.name}}</div>
           </div>
         </div>
       </div>
       }
     </div>
-    <div class="h-28"></div>
     }
   </div>
+
+  @if(isDropdownOpen){
+  <div class="h-44"></div>
+  }
 
 </div>

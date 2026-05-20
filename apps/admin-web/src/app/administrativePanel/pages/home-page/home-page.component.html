@@ -33,7 +33,7 @@
               <span class="text-sm font-semibold text-blue-500">Rutas</span>
               <i class="fa-solid fa-route text-blue-500"></i>
             </div>
-            <p class="mt-6 text-3xl font-bold text-stu-text">05</p>
+            <p class="mt-6 text-3xl font-bold text-stu-text">{{ totalRoutes() }}</p>
             <p class="mt-1 text-sm text-stu-text/60">Administración</p>
           </div>
           <div class="rounded-3xl bg-stu-panel border border-stu-border p-5 shadow-sm">
@@ -41,7 +41,7 @@
               <span class="text-sm font-semibold text-emerald-500">Paradas</span>
               <i class="fa-solid fa-location-dot text-emerald-500"></i>
             </div>
-            <p class="mt-6 text-3xl font-bold text-stu-text">14</p>
+            <p class="mt-6 text-3xl font-bold text-stu-text">{{ totalStops() }}</p>
             <p class="mt-1 text-sm text-stu-text/60">Puntos</p>
           </div>
           <div class="rounded-3xl bg-stu-panel border border-stu-border p-5 shadow-sm">
@@ -49,7 +49,7 @@
               <span class="text-sm font-semibold text-amber-500">Usuarios</span>
               <i class="fa-solid fa-users text-amber-500"></i>
             </div>
-            <p class="mt-6 text-3xl font-bold text-stu-text">28</p>
+            <p class="mt-6 text-3xl font-bold text-stu-text">{{ totalUsers() }}</p>
             <p class="mt-1 text-sm text-stu-text/60">Registros</p>
           </div>
           <div class="rounded-3xl bg-stu-panel border border-stu-border p-5 shadow-sm">
@@ -57,7 +57,7 @@
               <span class="text-sm font-semibold text-stu-accent">Conductores</span>
               <i class="fa-solid fa-id-badge text-stu-accent"></i>
             </div>
-            <p class="mt-6 text-3xl font-bold text-stu-text">09</p>
+            <p class="mt-6 text-3xl font-bold text-stu-text">{{ totalAssignments() }}</p>
             <p class="mt-1 text-sm text-stu-text/60">Asignaciones</p>
           </div>
         </div>

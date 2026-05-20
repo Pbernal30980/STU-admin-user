@@ -3,10 +3,11 @@
   [titlePage]="titleList()" (deleteItem)="deleteItem.emit($event)" (itemToEdit)="itemToEdit.emit($event)"
   [filter]="showFilter()" ></app-toList>
 }
-
 @if (showForm) {
   <app-forms (comeBackList)="toggleForm()" [form]="form()" [title]="titleForm()" [editTitle]="editTitle()"
   [isEditing]="isEditing()" (createItem)="createItem.emit($event)" (editItem)="editIem.emit($event)"
-  [banderaRouteOrStop]="bandera()"/>
-
+  [banderaRouteOrStop]="bandera()"
+  [showMapSelector]="showMapSelector()"
+  [selectedLat]="selectedLat()"
+  [selectedLng]="selectedLng()"/>
 }

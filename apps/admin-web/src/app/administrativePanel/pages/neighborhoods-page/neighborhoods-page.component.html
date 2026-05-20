@@ -1,0 +1,6 @@
+<app-header [title]="'Barrios'"/>
+<app-show-form [form]="neighborhoodsForm()" [list]="service.neighborhoods()" [titleForm]="'Crear barrio'" [titleList]="'Lista de Barrios'"
+(deleteItem)="onDeleteItem($event)" [bandera]="'neighborhood'" (editIem)="onEditIem($event)"
+(itemToEdit)="onItemToEdit($event)" (createItem)="onCreateItem($event)"
+[editTitle]="'Editar barrio'" [isEditing]="isEditing()" (clearItemToEdit)="service.clearNeighborhoodsSelected()"
+/>

@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { Routes, Neighborhood, Stops } from '../interfaces/models.interface';
 import { GtuNeighborhoodsService } from './gtu-neighborhoods.service';
 import { GtuStopsService } from './gtu-stops.service';
+import { GtuNotificationService } from './gtu-notification.service';
 // Importaciones de Firebase
 import { Firestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from '@angular/fire/firestore';
 @Injectable({ providedIn: 'root' })
@@ -9,6 +10,7 @@ export class GtuRoutesService {
   neighborhoodsService = inject(GtuNeighborhoodsService);
   stopsService = inject(GtuStopsService);
   private firestore = inject(Firestore);
+  private notificationService = inject(GtuNotificationService);
   // Referencia a la colección 'Rutas' en Firestore
   private routesCollection = collection(this.firestore, 'Rutas');
   routes = signal<Routes[]>([]);
@@ -71,6 +73,7 @@ export class GtuRoutesService {
     try {
       await addDoc(this.routesCollection, newRoute);
       console.info('[GtuRoutesService] Ruta creada exitosamente');
+      this.notificationService.logChange('CREATE', `Se creó la ruta "${route.name}"`);
       
       // Limpiamos las selecciones temporales del formulario
       this.neighborhoodsService.neighborhoodsSelected.set([]);
@@ -80,10 +83,14 @@ export class GtuRoutesService {
     }
   }
   async deleteRoute(id: string | number) {
+    const routeObj = this.routes().find(r => r.id?.toString() === id.toString());
+    const routeName = routeObj ? routeObj.name : `con ID ${id}`;
+
     try {
       const routeDocRef = doc(this.firestore, `Rutas/${id.toString()}`);
       await deleteDoc(routeDocRef);
       console.info('[GtuRoutesService] Ruta eliminada exitosamente');
+      this.notificationService.logChange('DELETE', `Se eliminó la ruta "${routeName}"`);
     } catch (error) {
       console.error('[GtuRoutesService] Error al eliminar ruta:', error);
     }
@@ -119,6 +126,7 @@ export class GtuRoutesService {
       const routeDocRef = doc(this.firestore, `Rutas/${route.id}`);
       await updateDoc(routeDocRef, routeData);
       console.info('[GtuRoutesService] Ruta actualizada exitosamente');
+      this.notificationService.logChange('EDIT', `Se actualizó la ruta "${route.name}"`);
       
       // Cerramos el modo edición y limpiamos
       this.routeToEdit.set(null);

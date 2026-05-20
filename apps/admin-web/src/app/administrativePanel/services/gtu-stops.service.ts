@@ -1,34 +1,125 @@
-// TODO: Migrar a Firebase. Las llamadas HTTP al backend legacy han sido desactivadas.
 import { Injectable, signal, inject } from '@angular/core';
 import { Stops } from '../interfaces/models.interface';
 import { GtuNeighborhoodsService } from './gtu-neighborhoods.service';
+import { GtuNotificationService } from './gtu-notification.service';
+// Importaciones de Firebase
+import { Firestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class GtuStopsService {
-
   neighborhoodService = inject(GtuNeighborhoodsService);
+  private firestore = inject(Firestore);
+  private notificationService = inject(GtuNotificationService);
+  
+  // Referencia a la colección 'Paradas' en Firestore
+  private stopsCollection = collection(this.firestore, 'Paradas');
+
   stopToEdit = signal<Stops | null>(null);
   stopsSelected = signal<Stops[]>([]);
   stops = signal<Stops[]>([]);
 
   constructor() {
-    // Firebase integration pending — no HTTP calls made
+    this.loadStops();
   }
 
   mapRecordFormToStop(formValues: Record<string, string>): Stops {
+    // Priorizar coordenadas del formulario si están disponibles y son válidas
+    const formLat = parseFloat(formValues['latitude'] || '0');
+    const formLng = parseFloat(formValues['longitude'] || '0');
+    const hasValidCoords = !isNaN(formLat) && !isNaN(formLng) && 
+                         formLat !== 0 && formLng !== 0;
+
     return {
       id: this.stopToEdit()?.id || '',
       name: formValues['name'],
       description: formValues['description'],
-      neighborhoodId: this.neighborhoodService.neighborhoodSelected()!.id,
-      latitude: this.neighborhoodService.neighborhoodLatitudeSelected()!,
-      longitude: this.neighborhoodService.neighborhoodLongitudeSelected()!,
+      // Extraemos los datos del barrio seleccionado en el otro servicio
+      neighborhoodId: this.neighborhoodService.neighborhoodSelected()!.id as string,
+      latitude: hasValidCoords ? formLat : this.neighborhoodService.neighborhoodLatitudeSelected()!,
+      longitude: hasValidCoords ? formLng : this.neighborhoodService.neighborhoodLongitudeSelected()!,
     };
   }
 
   loadStops() {
-    // TODO: Firebase — leer colección /stops
-    console.info('[GtuStopsService] loadStops: pendiente integración Firebase');
+    onSnapshot(this.stopsCollection, (snapshot) => {
+      const mappedStops: Stops[] = snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          name: data['Nombre'] || 'Sin nombre',
+          description: data['Descripcion'] || '',
+          neighborhoodId: data['BarrioId'] || '',
+          latitude: data['Latitud'] || 0,
+          longitude: data['Longitud'] || 0
+        };
+      });
+
+      this.stops.set(mappedStops);
+    }, (error) => {
+      console.error('[GtuStopsService] Error al leer paradas:', error);
+    });
+  }
+
+  async createStop(form: Record<string, string>) {
+    const stop = this.mapRecordFormToStop(form);
+    
+    const newStop = {
+      Nombre: stop.name,
+      Descripcion: stop.description,
+      BarrioId: stop.neighborhoodId,
+      Latitud: stop.latitude,
+      Longitud: stop.longitude
+    };
+
+    try {
+      await addDoc(this.stopsCollection, newStop);
+      console.info('[GtuStopsService] Parada creada exitosamente');
+      this.notificationService.logChange('CREATE', `Se creó la parada "${stop.name}"`);
+      
+      // Limpiamos la selección del barrio
+      this.neighborhoodService.clearNeighborhoodsSelected();
+    } catch (error) {
+      console.error('[GtuStopsService] Error al crear parada:', error);
+    }
+  }
+
+  async deleteStop(id: string | number) {
+    const stopObj = this.stops().find(s => s.id?.toString() === id.toString());
+    const stopName = stopObj ? stopObj.name : `con ID ${id}`;
+
+    try {
+      const stopDocRef = doc(this.firestore, `Paradas/${id.toString()}`);
+      await deleteDoc(stopDocRef);
+      console.info('[GtuStopsService] Parada eliminada exitosamente');
+      this.notificationService.logChange('DELETE', `Se eliminó la parada "${stopName}"`);
+    } catch (error) {
+      console.error('[GtuStopsService] Error al eliminar parada:', error);
+    }
+  }
+
+  async editStop(form: Record<string, string>) {
+    const stop = this.mapRecordFormToStop(form);
+    if (!stop.id) return;
+
+    const stopData = {
+      Nombre: stop.name,
+      Descripcion: stop.description,
+      BarrioId: stop.neighborhoodId,
+      Latitud: stop.latitude,
+      Longitud: stop.longitude
+    };
+
+    try {
+      const stopDocRef = doc(this.firestore, `Paradas/${stop.id}`);
+      await updateDoc(stopDocRef, stopData);
+      console.info('[GtuStopsService] Parada actualizada exitosamente');
+      this.notificationService.logChange('EDIT', `Se actualizó la parada "${stop.name}"`);
+      
+      this.stopToEdit.set(null);
+      this.neighborhoodService.clearNeighborhoodsSelected();
+    } catch (error) {
+      console.error('[GtuStopsService] Error al actualizar parada:', error);
+    }
   }
 
   addStops(stop: Stops) {
@@ -44,35 +135,10 @@ export class GtuStopsService {
     this.stopsSelected.set([]);
   }
 
-  createStop(form: Record<string, string>) {
-    // TODO: Firebase — crear documento en /stops
-    const stop = this.mapRecordFormToStop(form);
-    const tempId = Date.now().toString();
-    this.stops.update((prev) => [...prev, { ...stop, id: tempId }]);
-    console.info('[GtuStopsService] createStop: pendiente integración Firebase', stop);
-  }
-
-  deleteStop(id: string | number) {
-    // TODO: Firebase — eliminar documento /stops/{id}
-    this.stops.update((prev) => prev.filter((s) => s.id !== id));
-    console.info('[GtuStopsService] deleteStop: pendiente integración Firebase', id);
-  }
-
   stopSelectedToEdit(stop: Stops) {
     this.stopToEdit.set(stop);
     this.neighborhoodService.addNeighborhood(
       this.neighborhoodService.neighborhoods().find((n) => n.id === stop.neighborhoodId)!
     );
-  }
-
-  async editStop(form: Record<string, string>) {
-    // TODO: Firebase — actualizar documento /stops/{id}
-    const stop = this.mapRecordFormToStop(form);
-    // Para mantener consistencia con el patrón de Firebase, implementaremos la actualización real
-    // Por ahora mantenemos la lógica anterior pero con tipos correctos
-    this.stops.update((prev) =>
-      prev.map((s) => (s.id === stop.id ? { ...s, ...stop } : s))
-    );
-    console.info('[GtuStopsService] editStop: pendiente integración Firebase', stop);
   }
 }

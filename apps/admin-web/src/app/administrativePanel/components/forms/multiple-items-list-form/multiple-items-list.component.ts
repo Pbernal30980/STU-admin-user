@@ -12,7 +12,7 @@ export class MutipleItemsListComponent {
   bandera = input.required<boolean>();
   neighborhoodService = inject(GtuNeighborhoodsService);
   stopService = inject(GtuStopsService);
-  isDropdownOpen = true;
+  isDropdownOpen = false;
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;

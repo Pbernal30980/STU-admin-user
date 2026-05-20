@@ -1,0 +1,24 @@
+<div class="map-container">
+  <div class="map-header mb-2">
+    <p class="text-sm text-stu-text/60">Haz clic en el mapa o arrastra el marcador para establecer la ubicación exacta</p>
+  </div>
+  
+  <div class="map-wrapper relative border border-stu-border rounded-2xl overflow-hidden shadow-inner my-3 bg-stu-input">
+    <!-- Contenedor nativo para el mapa de Leaflet -->
+    <div #mapContainer style="height: 400px; width: 100%; z-index: 10;"></div>
+  </div>
+  
+  <div class="map-footer mt-4">
+    @if (selectedPosition()) {
+      <div class="flex flex-col space-y-1 text-stu-text">
+        <span class="font-semibold text-sm text-stu-accent">Coordenadas Seleccionadas:</span>
+        <div class="flex space-x-6 text-sm">
+          <span><strong class="text-stu-text/50">Latitud:</strong> {{ selectedPosition()?.[0]?.toFixed(6) }}</span>
+          <span><strong class="text-stu-text/50">Longitud:</strong> {{ selectedPosition()?.[1]?.toFixed(6) }}</span>
+        </div>
+      </div>
+    } @else {
+      <p class="text-stu-text/40 text-sm">No se ha seleccionado ninguna ubicación en el mapa</p>
+    }
+  </div>
+</div>

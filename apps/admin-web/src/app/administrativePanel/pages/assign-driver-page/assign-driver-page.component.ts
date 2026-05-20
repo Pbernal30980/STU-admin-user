@@ -17,10 +17,19 @@ export default class AssignDriverPageComponent {
   serviceAssignDriver = inject(GtuAssignDriverService);
 
   createDriverAssignmet() {
-    this.serviceAssignDriver.createDriverAssignment(
-      this.serviceRoute.routeSelected()?.id!,
-      this.serviceUser.userSelected()?.id!,
-    )
+    const routeId = this.serviceRoute.routeSelected()?.id;
+    const driverId = this.serviceUser.userSelected()?.id;
+
+    if (!routeId || !driverId) {
+      console.warn('[AssignDriverPageComponent] Debe seleccionar una ruta y un conductor');
+      return;
+    }
+
+    this.serviceAssignDriver.createDriverAssignment(routeId, driverId);
+    
+    // Limpiar selecciones una vez creadas
+    this.serviceRoute.clearRouteSelected();
+    this.serviceUser.clearUserSelected();
   }
   getRouteNameById(routeId: string): string | undefined {
     const route = this.serviceRoute.routes()?.find((route) => route.id === routeId);

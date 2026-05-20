@@ -12,14 +12,19 @@ export class SelectedItemRouteOrDriverComponent {
   list = input.required<Routes[] | User[]>();
   title = input.required<string>();
   add = output<any>();
-  selected = input<String>();
-  isDropdownOpen = true;
+  selected = input<string>();
+  isDropdownOpen = false;
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
+
+  selectItem(item: any) {
+    this.add.emit(item);
+    this.isDropdownOpen = false;
+  }
+
   ngOnDestroy() {
     this.clear.emit();
-
   }
 }

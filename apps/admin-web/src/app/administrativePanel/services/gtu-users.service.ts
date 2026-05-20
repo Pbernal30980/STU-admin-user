@@ -1,11 +1,13 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { User } from '../interfaces/models.interface';
+import { GtuNotificationService } from './gtu-notification.service';
 // Importamos onSnapshot en lugar de collectionData
 import { Firestore, collection, addDoc, deleteDoc, doc, onSnapshot } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class GtuUsersService {
   private firestore = inject(Firestore);
+  private notificationService = inject(GtuNotificationService);
   
   // Referencia directa a tu colección en la base de datos
   private usersCollection = collection(this.firestore, 'Usuarios');
@@ -43,9 +45,9 @@ export class GtuUsersService {
       // Actualizamos las señales. ¡La tabla en el HTML reaccionará sola!
       this.users.set(mappedUsers);
       
-      // Estandarizamos a mayúsculas para evitar problemas de case sensitivity
+      // Estandarizamos a mayúsculas para evitar problemas de case sensitivity. Solo conductores (DRIVER).
       this.userDriver.set(mappedUsers.filter(u => 
-        u.role.toUpperCase() === 'DRIVER' || u.role.toUpperCase() === 'ADMIN'
+        u.role.toUpperCase() === 'DRIVER'
       ));
       
     }, (error) => {
@@ -54,8 +56,9 @@ export class GtuUsersService {
   }
 
   async createUser(form: Record<string, string>) {
+    const fullName = `${form['name']} ${form['lastname']}`;
     const newUser = {
-      Nombre: `${form['name']} ${form['lastname']}`,
+      Nombre: fullName,
       Correo: `${form['name'].toLowerCase()}.${form['lastname'].toLowerCase()}@gtu.com`,
       Rol: form['role'].toUpperCase()
     };
@@ -63,16 +66,22 @@ export class GtuUsersService {
     try {
       await addDoc(this.usersCollection, newUser);
       console.info('[GtuUsersService] Usuario creado exitosamente en Firebase');
+      const roleText = form['role'].toUpperCase() === 'ADMIN' ? 'Administrador' : 'Conductor';
+      this.notificationService.logChange('CREATE', `Se creó el usuario "${fullName}" como ${roleText}`);
     } catch (error) {
       console.error('[GtuUsersService] Error al crear usuario:', error);
     }
   }
 
   async deleteUser(id: string | number) {
+    const userObj = this.users().find(u => u.id?.toString() === id.toString());
+    const userName = userObj ? userObj.name : `con ID ${id}`;
+
     try {
       const userDocRef = doc(this.firestore, `Usuarios/${id.toString()}`);
       await deleteDoc(userDocRef);
       console.info('[GtuUsersService] Usuario eliminado de Firebase');
+      this.notificationService.logChange('DELETE', `Se eliminó el usuario "${userName}"`);
     } catch (error) {
       console.error('[GtuUsersService] Error al eliminar usuario:', error);
     }

@@ -8,25 +8,7 @@
     }
 }
 
-<google-map height="400px" width="100%" [mapId]="env" [center]="center()" [zoom]="isEditing() ?  13:zoom()">
-
-  @if(isEditing()){
-    @if(neighborhoodItem.neighborhoodSelected() != null) {
-      @for (location of locations(); track location) {
-        @if(neighborhoodItem.neighborhoodSelected()?.name == location.name) {
-          <map-advanced-marker #marker="mapAdvancedMarker" (mapClick)="openInfoWindow(location,marker)"
-          [position]="{lat:location.latitude, lng:location.longitude}" />
-        }
-      }
-    }
-  }
-
-  @if (isEditing() == false) {
-
-      @for (location of locations(); track location) {
-        <map-advanced-marker #marker="mapAdvancedMarker" (mapClick)="openInfoWindow(location,marker)"
-        [position]="{lat:location.latitude, lng:location.longitude}" />
-      }
-  }
-  <map-info-window />
-</google-map>
+<div class="map-wrapper relative border border-stu-border rounded-2xl overflow-hidden shadow-inner my-3 bg-stu-input">
+  <!-- Contenedor nativo de Leaflet -->
+  <div #mapContainer style="height: 400px; width: 100%; z-index: 10;"></div>
+</div>
